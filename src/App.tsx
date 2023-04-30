@@ -1,7 +1,78 @@
+import { 
+	getPublicKey, relayInit, SimplePool,
+	Event, getEventHash, signEvent, Relay,
+} from "nostr-tools";
+import { useState, useEffect } from "react";
 import './App.css';
+import CreatePostCard from "./components/createPostCard";
+import DisplayEventCard from "./components/displayEventCard";
+import AuthCard from "./components/authCard";
+import CreatedAccModal from "./components/createdAccModal";
+
+
+
+export const RELAYS = [
+  "wss://nostr-pub.wellorder.net",
+  "wss://nostr.drss.io",
+  "wss://nostr.swiss-enigma.ch",
+  "wss://relay.damus.io",
+];
 
 
 function App() {
+	const [pool, setPool] = useState<SimplePool | null>(null);
+	const [showKeysModal, setShowKeysModal] = useState<boolean>(false);
+	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+	const [events, setEvents] = useState<Event[]>([]);
+	const [relay, setRelay] = useState<Relay | null>(null);
+	const [sk, setSk] = useState<string | null>(null);
+	const [pk, setPk] = useState<string | null>(sk ? getPublicKey(sk) : null);
+
+	useEffect(() => {
+		const connectRelay = async () => {
+			const relay = relayInit('wss://relay.damus.io');
+			await relay.connect();
+
+			relay.on("connect", () => {
+				setRelay(relay);
+			})
+			relay.on("error", () => {
+				console.log('failed to connect to relay')
+			})
+		}
+		connectRelay();
+
+		console.log(isLoggedIn)
+		console.log(pk)
+		if (sk && !isLoggedIn) {
+			setPk(getPublicKey(sk))
+			setIsLoggedIn(true)
+		}
+	}, [sk, pk]);
+
+	const publishEvent = (event: Event, _sk?: string) => {
+		console.log(event, _sk)
+		event.id = getEventHash(event);
+		event.sig = signEvent(event, _sk ? _sk : sk);
+
+		const pub = relay.publish(event);
+		pub.on("ok", () => {
+			console.log('hit')
+			setIsLoggedIn(true);
+		});
+		pub.on("failed", reason => {
+			console.log(reason);
+		})
+	}
+
+	const getEvents = async () => {
+		let events = await relay.list([{
+			kinds: [1],
+		}]);
+		setEvents(events);
+	}
+
+
   return (
 		<div className="w-screen h-screen">
 			<div className="flex flex-col w-screen">
@@ -17,12 +88,29 @@ function App() {
 				</div>
 				
 				<div className="flex flex-row">
-					<div className="flex flex-col">
-					
+					<div className="flex flex-col w-2/6 h-screen p-5">
+						{relay && sk && pk ? <CreatePostCard 
+							posterPK={pk}  
+							posterSK={sk}  
+							publishEvent={publishEvent}
+						/>: relay && !sk ? 
+								<AuthCard 
+									setSk={setSk} 
+									publishEvent={publishEvent} 
+									setShowKeysModal={setShowKeysModal}
+								/>
+							: <p>uh oh</p>}
 					</div>
-					<div className="flex flex-col">
-
+					<div className="flex flex-col w-4/6 p-5">
+						{relay && events.length > 0 ? (
+							<div className="flex flex-col space-y-4">
+								{events.map((event) => {
+									return <DisplayEventCard event={event} />
+								})}
+							</div>
+						): <button className="mb-2" onClick={() => getEvents()}>Load Feed!</button>}
 					</div>
+					{sk && pk && showKeysModal ? <CreatedAccModal sk={sk} pk={pk} setShowKeysModal={setShowKeysModal}/>: <></>}
 				</div>
 			</div>
 		</div>
