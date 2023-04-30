@@ -3,10 +3,11 @@ import {
 	SimplePool, Event, getEventHash, signEvent,
 	Relay,
 } from "nostr-tools";
-import {useProfile} from "nostr-react";
+import { useProfile } from "nostr-react";
 import { useState, useEffect } from "react";
 import './App.css';
 import CreatePostCard from "./components/createPostCard";
+import DisplayEventCard from "./components/displayEventCard";
 
 
 
@@ -22,7 +23,7 @@ function App() {
 	const [pool, setPool] = useState<SimplePool | null>(null);
 	const [events, setEvents] = useState<Event[]>([]);
 	const [relay, setRelay] = useState<Relay | null>(null);
-	const [sk, setSk] = useState<string>("");
+	const [sk, setSk] = useState<string>("1a891edda8301d105145ed4514fb47b50fa6510982c74913723157019c461096");
 	const [pk, setPk] = useState<string>(getPublicKey(sk));
 	const {data: userData} = useProfile({pubkey: pk});
 	const [pubStatus, setPubStatus] = useState("");
@@ -39,19 +40,8 @@ function App() {
 				console.log('failed to connect to relay')
 			})
 		}
-
 		connectRelay();
-
-		if (events) {
-			console.log(events)
-		}
-
-		console.log(61, userData);
-		if (userData) {
-			console.log(61, userData);
-		}
-
-	}, [events]);
+	}, []);
 
 	const publishEvent = (event: Event) => {
 		event.id = getEventHash(event);
@@ -89,7 +79,7 @@ function App() {
 				</div>
 				
 				<div className="flex flex-row">
-					<div className="flex flex-col w-2/6 h-screen px-5">
+					<div className="flex flex-col w-2/6 h-screen p-5">
 						{relay ? <CreatePostCard 
 							posterPK={pk}  
 							posterSK={sk}  
@@ -98,14 +88,14 @@ function App() {
 							publishEvent={publishEvent}
 						/>: <></>}
 					</div>
-					<div className="flex flex-col w-4/6">
-						{relay ? (
-							<div>
-								<button onClick={() => publishEvent(event)}>Publish Event</button>
-								<button onClick={() => getEvents()}>Load Feed!</button>
+					<div className="flex flex-col w-4/6 p-5">
+						{relay && events.length > 0 ? (
+							<div className="flex flex-col space-y-4">
+								{events.map((event) => {
+									return <DisplayEventCard event={event} />
+								})}
 							</div>
-						): <p>Failed to connect to relay</p>}
-						<p>{pubStatus}</p>
+						): <button className="mb-2" onClick={() => getEvents()}>Load Feed!</button>}
 					</div>
 				</div>
 			</div>
