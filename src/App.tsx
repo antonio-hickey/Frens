@@ -22,21 +22,9 @@ function App() {
 	const [pool, setPool] = useState<SimplePool | null>(null);
 	const [events, setEvents] = useState<Event[]>([]);
 	const [relay, setRelay] = useState<Relay | null>(null);
-
-	//const [sk, setSk] = useState(generatePrivateKey())
-	//const [pk, setPk] = useState(getPublicKey(sk))
-	
-	/*
-		* Login Flow:
-			* User paste in their private key and we derive their 
-  			public key from the their private key.
-	*/
-
-	const [sk, setSk] = useState<string>("1a891edda8301d105145ed4514fb47b50fa6510982c74913723157019c461096")
-	const [pk, setPk] = useState<string>(getPublicKey(sk))
+	const [sk, setSk] = useState<string>("");
+	const [pk, setPk] = useState<string>(getPublicKey(sk));
 	const {data: userData} = useProfile({pubkey: pk});
-
-	
 	const [pubStatus, setPubStatus] = useState("");
 
 	useEffect(() => {
@@ -65,18 +53,10 @@ function App() {
 
 	}, [events]);
 
-	const event: Event = {
-		kind: 1,
-		pubkey: pk,
-		created_at: Math.floor(Date.now() / 1000),
-		content: "We are testing nostr in react",
-		tags: [],
-	}
-	event.id = getEventHash(event);
-	event.sig = signEvent(event, sk);
-
-
 	const publishEvent = (event: Event) => {
+		event.id = getEventHash(event);
+		event.sig = signEvent(event, sk);
+
 		const pub = relay.publish(event);
 		pub.on("ok", () => {
 			setPubStatus("our event is published");
@@ -111,7 +91,6 @@ function App() {
 				<div className="flex flex-row">
 					<div className="flex flex-col w-2/6 h-screen px-5">
 						{relay ? <CreatePostCard 
-							relay={relay}
 							posterPK={pk}  
 							posterSK={sk}  
 							posterName={userData?.name!} 
