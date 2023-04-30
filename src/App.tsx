@@ -1,13 +1,13 @@
 import { 
-	generatePrivateKey, getPublicKey, relayInit, 
-	SimplePool, Event, getEventHash, signEvent,
-	Relay,
+	getPublicKey, relayInit, SimplePool,
+	Event, getEventHash, signEvent, Relay,
 } from "nostr-tools";
-import { useProfile } from "nostr-react";
 import { useState, useEffect } from "react";
 import './App.css';
 import CreatePostCard from "./components/createPostCard";
 import DisplayEventCard from "./components/displayEventCard";
+import AuthCard from "./components/authCard";
+import CreatedAccModal from "./components/createdAccModal";
 
 
 
@@ -21,12 +21,12 @@ export const RELAYS = [
 
 function App() {
 	const [pool, setPool] = useState<SimplePool | null>(null);
+	const [showKeysModal, setShowKeysModal] = useState<boolean>(false);
+	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [events, setEvents] = useState<Event[]>([]);
 	const [relay, setRelay] = useState<Relay | null>(null);
-	const [sk, setSk] = useState<string>("1a891edda8301d105145ed4514fb47b50fa6510982c74913723157019c461096");
-	const [pk, setPk] = useState<string>(getPublicKey(sk));
-	const {data: userData} = useProfile({pubkey: pk});
-	const [pubStatus, setPubStatus] = useState("");
+	const [sk, setSk] = useState<string | null>(null);
+	const [pk, setPk] = useState<string | null>(sk ? getPublicKey(sk) : null);
 
 	useEffect(() => {
 		const connectRelay = async () => {
@@ -41,18 +41,27 @@ function App() {
 			})
 		}
 		connectRelay();
-	}, []);
 
-	const publishEvent = (event: Event) => {
+		console.log(isLoggedIn)
+		console.log(pk)
+		if (sk && !isLoggedIn) {
+			setPk(getPublicKey(sk))
+			setIsLoggedIn(true)
+		}
+	}, [sk, pk]);
+
+	const publishEvent = (event: Event, _sk?: string) => {
+		console.log(event, _sk)
 		event.id = getEventHash(event);
-		event.sig = signEvent(event, sk);
+		event.sig = signEvent(event, _sk ? _sk : sk);
 
 		const pub = relay.publish(event);
 		pub.on("ok", () => {
-			setPubStatus("our event is published");
+			console.log('hit')
+			setIsLoggedIn(true);
 		});
 		pub.on("failed", reason => {
-			setPubStatus("our event was NOT published " + reason);
+			console.log(reason);
 		})
 	}
 
@@ -80,13 +89,17 @@ function App() {
 				
 				<div className="flex flex-row">
 					<div className="flex flex-col w-2/6 h-screen p-5">
-						{relay ? <CreatePostCard 
+						{relay && sk && pk ? <CreatePostCard 
 							posterPK={pk}  
 							posterSK={sk}  
-							posterName={userData?.name!} 
-							posterPicUrl={userData?.picture!}
 							publishEvent={publishEvent}
-						/>: <></>}
+						/>: relay && !sk ? 
+								<AuthCard 
+									setSk={setSk} 
+									publishEvent={publishEvent} 
+									setShowKeysModal={setShowKeysModal}
+								/>
+							: <p>uh oh</p>}
 					</div>
 					<div className="flex flex-col w-4/6 p-5">
 						{relay && events.length > 0 ? (
@@ -97,6 +110,7 @@ function App() {
 							</div>
 						): <button className="mb-2" onClick={() => getEvents()}>Load Feed!</button>}
 					</div>
+					{sk && pk && showKeysModal ? <CreatedAccModal sk={sk} pk={pk} setShowKeysModal={setShowKeysModal}/>: <></>}
 				</div>
 			</div>
 		</div>
