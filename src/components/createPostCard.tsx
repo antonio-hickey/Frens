@@ -1,4 +1,4 @@
-import { Event } from "nostr-tools";
+import { UnsignedEvent } from "nostr-tools";
 import { useProfile } from "nostr-react";
 
 import { useRef } from "react";
@@ -7,7 +7,7 @@ import { useRef } from "react";
 interface CreatePostCardProps {
 	posterPK: string,
 	posterSK: string,
-	publishEvent: (event: Event) => void,
+	publishEvent: (event: UnsignedEvent) => void,
 }
 
 export default function CreatePostCard(props: CreatePostCardProps) {
@@ -44,7 +44,7 @@ export default function CreatePostCard(props: CreatePostCardProps) {
 							  kind: 1,
 							  created_at: Math.floor(Date.now() / 1000),
 							  tags: [],
-							  content: textArea?.current?.value,
+							  content: textArea?.current?.value!,
 							  pubkey: props.posterPK, 
 							}
 

@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction, useRef } from "react";
 import { GiSkeletonKey } from "react-icons/gi";
 import { HiPencilSquare, HiUserCircle } from "react-icons/hi2"
-import { generatePrivateKey, getPublicKey, Event } from "nostr-tools";
+import { generatePrivateKey, getPublicKey, UnsignedEvent } from "nostr-tools";
 
 
 interface AuthCardProps {
 	setSk: Dispatch<SetStateAction<string | null>>,
-	publishEvent: (event: Event, sk?:string) => void,
+	publishEvent: (event: UnsignedEvent, sk?:string) => void,
 	setShowKeysModal: Dispatch<SetStateAction<boolean>>,
 }
 

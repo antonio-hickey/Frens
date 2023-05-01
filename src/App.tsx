@@ -1,7 +1,7 @@
 import { 
-	getPublicKey, relayInit, SimplePool,
-	Event, getEventHash, signEvent, Relay,
-} from "nostr-tools";
+	getPublicKey, relayInit, Event, 
+	getEventHash, signEvent, Relay, UnsignedEvent,
+} from 'nostr-tools';
 import { useState, useEffect } from "react";
 import './App.css';
 import CreatePostCard from "./components/createPostCard";
@@ -20,7 +20,6 @@ export const RELAYS = [
 
 
 function App() {
-	const [pool, setPool] = useState<SimplePool | null>(null);
 	const [showKeysModal, setShowKeysModal] = useState<boolean>(false);
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [events, setEvents] = useState<Event[]>([]);
@@ -50,26 +49,34 @@ function App() {
 		}
 	}, [sk, pk]);
 
-	const publishEvent = (event: Event, _sk?: string) => {
-		console.log(event, _sk)
-		event.id = getEventHash(event);
-		event.sig = signEvent(event, _sk ? _sk : sk);
+	const createEvent = (unsignedEvent: UnsignedEvent, sk: string): Event => {
+		const eventHash = getEventHash(unsignedEvent);
+		const signature = signEvent(unsignedEvent, sk);
+		return {
+			...unsignedEvent,
+			id: eventHash,
+			sig: signature,
+		}
+	}
 
-		const pub = relay.publish(event);
-		pub.on("ok", () => {
+	const publishEvent = (event: UnsignedEvent, _sk?: string) => {
+		console.log(event, _sk)
+		const signedEvent = createEvent(event, _sk ? _sk : sk ? sk : "");
+		const pub = relay?.publish(signedEvent);
+		pub?.on("ok", () => {
 			console.log('hit')
 			setIsLoggedIn(true);
 		});
-		pub.on("failed", reason => {
+		pub?.on("failed", (reason: string) => {
 			console.log(reason);
 		})
 	}
 
 	const getEvents = async () => {
-		let events = await relay.list([{
+		let events = await relay?.list([{
 			kinds: [1],
 		}]);
-		setEvents(events);
+		if (events) setEvents(events);
 	}
 
 
