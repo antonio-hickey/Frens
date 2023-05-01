@@ -76,18 +76,18 @@ function App() {
 		let events = await relay?.list([{
 			kinds: [1],
 		}]);
-		if (events) setEvents(events);
+		if (events) setEvents([events[0]]);
 	}
 
 
   return (
-		<div className="w-screen h-screen">
+		<div className="w-screen h-screen dark:bg-[#242424]">
 			<div className="flex flex-col w-screen">
 				<div className="flex flex-row w-screen h-10">
       		<div className="flex w-full flex-col items-center justify-center">
-      		  <div className="relative mb-8 text-4xl md:text-6xl font-bold">
+      		  <div className="relative mb-8 text-4xl md:text-6xl font-bold text-green-200 dark:text-gray-200">
       		    Frens
-      		    <sup className="absolute top-0 left-full text-base text-green-300">
+      		    <sup className="absolute top-0 left-full text-base text-gray-400 dark:text-green-300">
       		      :)
       		    </sup>
       		  </div>
@@ -115,7 +115,13 @@ function App() {
 									return <DisplayEventCard event={event} />
 								})}
 							</div>
-						): <button className="mb-2" onClick={() => getEvents()}>Load Feed!</button>}
+						): <button 
+								className="mb-2 bg-gray-200 dark:bg-[#1a1a1a] border border-dashed border-green-300" 
+								onClick={() => getEvents()}
+							>
+								Load Feed!
+							</button>
+						}
 					</div>
 					{sk && pk && showKeysModal ? <CreatedAccModal sk={sk} pk={pk} setShowKeysModal={setShowKeysModal}/>: <></>}
 				</div>

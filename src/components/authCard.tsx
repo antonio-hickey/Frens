@@ -18,10 +18,9 @@ export default function AuthCard(props: AuthCardProps) {
 
 	return (
 		<div className="flex flex-col space-y-5">
-			<div className="rounded-lg bg-[#1a1a1a] shadow p-5">
+			<div className="rounded-lg bg-gray-200 shadow p-5 dark:bg-[#1a1a1a] border border-dashed border-green-300">
 				<div>
-  				<label className="block text-sm font-medium leading-6 text-gray-900">Private Key</label>
-  				<div className="relative rounded-md shadow-sm">
+  				<div className="mt-2 relative rounded-md shadow-sm">
   				  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 							<GiSkeletonKey className="text-green-700 h-6 w-6"/>
   				  </div>
@@ -46,7 +45,7 @@ export default function AuthCard(props: AuthCardProps) {
 				</button>
   		</div>
 
-			<div className="rounded-lg bg-[#1a1a1a] shadow p-5">
+			<div className="rounded-lg bg-gray-200 shadow p-5 dark:bg-[#1a1a1a] border border-dashed border-green-300">
   			<div className="relative rounded-md shadow-sm">
   			  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
 						<HiPencilSquare className="text-green-700 h-6 w-6"/>

@@ -10,7 +10,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
 
 	return (
-		<div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-[#1a1a1a] shadow">
+		<div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-[#1a1a1a] shadow border border-dashed border-green-300">
   		<div className="px-4 py-5 sm:px-6">
 				<div className="flex flex-row justify-between">
 					<img className="inline-block h-8 w-8 rounded-full" src={userData?.picture} alt="" />
