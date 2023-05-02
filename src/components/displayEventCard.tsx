@@ -4,6 +4,7 @@ import { Filter, type Event } from "nostr-tools";
 
 interface DisplayEventCardProps {
 	event: Event
+	showEvent: boolean,
 	getEvents: (filters: Filter[]) => void,
 }
 
@@ -11,7 +12,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
 
 	return (
-		<div className="divide-y divide-white overflow-hidden rounded-lg bg-gray-200 dark:bg-[#1a1a1a] shadow border border-dashed border-green-300">
+		<div className="divide-y divide-white overflow-hidden rounded-lg bg-gray-200 dark:bg-[#1a1a1a] shadow border border-dashed border-green-300" hidden={props.showEvent ? true : false}>
   		<div 
 				className="px-4 py-5 sm:px-6 hover:cursor-pointer text-lg hover:dark:bg-green-300/25 hover:!text-xl hover:cursor-pointer hover:underline hover:decoration-green-300"
 				onClick={() => {

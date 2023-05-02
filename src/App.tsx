@@ -1,14 +1,16 @@
+import { useState, useEffect } from "react";
 import { 
 	getPublicKey, relayInit, Event, 
 	getEventHash, signEvent, Relay, 
 	UnsignedEvent, Filter,
 } from 'nostr-tools';
-import { useState, useEffect } from "react";
+
 import './App.css';
 import CreatePostCard from "./components/createPostCard";
 import DisplayEventCard from "./components/displayEventCard";
 import AuthCard from "./components/authCard";
 import CreatedAccModal from "./components/createdAccModal";
+import EventLoader from "./components/eventLoader";
 
 
 
@@ -22,6 +24,7 @@ export const RELAYS = [
 
 function App() {
 	const [showKeysModal, setShowKeysModal] = useState<boolean>(false);
+	const [showEventsLoader, setShowEventsLoader] = useState<boolean>(true);
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [events, setEvents] = useState<Event[]>([]);
 	const [relay, setRelay] = useState<Relay | null>(null);
@@ -35,8 +38,12 @@ function App() {
 
 			relay.on("connect", async () => {
 				setRelay(relay);
-				const events: Event[] = await relay.list([{kinds: [1], limit: 50}]);
+				const events: Event[] = await relay.list([{kinds: [1], limit: 100}]);
 				setEvents(events);
+
+				setTimeout(() => {
+					setShowEventsLoader(false);
+				}, 1000);
 			})
 			relay.on("error", () => {
 				console.log('failed to connect to relay')
@@ -107,11 +114,19 @@ function App() {
 								/>
 							: <p>uh oh</p>}
 					</div>
-					<div className="flex flex-col w-4/6 p-5 max-h-full overflow-scroll">
-						{relay && events.length > 0 && (
+					<div 
+						className="flex flex-col w-4/6 p-5 max-h-full overflow-scroll"
+						onScroll={() => {
+
+						}}
+					>
+						{showEventsLoader && (
+							<EventLoader />
+						)}
+						{events && (
 							<div className="flex flex-col space-y-4">
 								{events.map((event, i) => {
-									return <DisplayEventCard event={event} getEvents={getEvents} key={i}/>
+									return <DisplayEventCard event={event} getEvents={getEvents} key={i} showEvent={showEventsLoader}/>
 								})}
 							</div>
 						)}
