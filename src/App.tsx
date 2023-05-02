@@ -33,17 +33,17 @@ function App() {
 			const relay = relayInit('wss://relay.damus.io');
 			await relay.connect();
 
-			relay.on("connect", () => {
+			relay.on("connect", async () => {
 				setRelay(relay);
+				const events: Event[] = await relay.list([{kinds: [1], limit: 50}]);
+				setEvents(events);
 			})
 			relay.on("error", () => {
 				console.log('failed to connect to relay')
 			})
-		}
-		connectRelay();
+		};
+		if (!relay) connectRelay();
 
-		console.log(isLoggedIn)
-		console.log(pk)
 		if (sk && !isLoggedIn) {
 			setPk(getPublicKey(sk))
 			setIsLoggedIn(true)
@@ -92,7 +92,7 @@ function App() {
 					</div>
 				</div>
 				
-				<div className="flex flex-row">
+				<div className="flex flex-row h-screen">
 					<div className="flex flex-col w-2/6 h-screen p-5">
 						{relay && sk && pk ? <CreatePostCard 
 							posterPK={pk}  
@@ -107,20 +107,14 @@ function App() {
 								/>
 							: <p>uh oh</p>}
 					</div>
-					<div className="flex flex-col w-4/6 p-5">
-						{relay && events.length > 0 ? (
+					<div className="flex flex-col w-4/6 p-5 max-h-full overflow-scroll">
+						{relay && events.length > 0 && (
 							<div className="flex flex-col space-y-4">
 								{events.map((event, i) => {
 									return <DisplayEventCard event={event} getEvents={getEvents} key={i}/>
 								})}
 							</div>
-						): <button 
-								className="mb-2 bg-gray-200 dark:bg-[#1a1a1a] border border-dashed border-green-300" 
-								onClick={() => getEvents([{kinds: [1]}])}
-							>
-								Load Feed!
-							</button>
-						}
+						)}
 					</div>
 					{sk && pk && showKeysModal ? <CreatedAccModal sk={sk} pk={pk} setShowKeysModal={setShowKeysModal}/>: <></>}
 				</div>
