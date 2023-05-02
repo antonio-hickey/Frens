@@ -85,7 +85,11 @@ function App() {
 			<div className="flex flex-col w-screen">
 				<div className="flex flex-row w-screen h-10">
       		<div className="flex w-full flex-col items-center justify-center">
-      		  <div className="relative mb-8 text-4xl md:text-6xl font-bold text-green-200 dark:text-gray-200">
+      		  <div className="relative mb-8 text-4xl md:text-6xl font-bold text-green-200 dark:text-gray-200 hover:cursor-pointer hover:underline hover:decoration-green-300"
+							onClick={async () => {
+								if (relay) setEvents(await relay.list([{kinds: [1], limit: 100}]))
+							}}
+						>
       		    Frens
       		    <sup className="absolute top-0 left-full text-base text-gray-400 dark:text-green-300">
       		      :)
