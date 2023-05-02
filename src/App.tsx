@@ -1,6 +1,7 @@
 import { 
 	getPublicKey, relayInit, Event, 
-	getEventHash, signEvent, Relay, UnsignedEvent,
+	getEventHash, signEvent, Relay, 
+	UnsignedEvent, Filter,
 } from 'nostr-tools';
 import { useState, useEffect } from "react";
 import './App.css';
@@ -64,7 +65,6 @@ function App() {
 		const signedEvent = createEvent(event, _sk ? _sk : sk ? sk : "");
 		const pub = relay?.publish(signedEvent);
 		pub?.on("ok", () => {
-			console.log('hit')
 			setIsLoggedIn(true);
 		});
 		pub?.on("failed", (reason: string) => {
@@ -72,11 +72,9 @@ function App() {
 		})
 	}
 
-	const getEvents = async () => {
-		let events = await relay?.list([{
-			kinds: [1],
-		}]);
-		if (events) setEvents([events[0]]);
+	const getEvents = async (filters: Filter[]) => {
+		let events = await relay?.list(filters);
+		if (events) setEvents(events);
 	}
 
 
@@ -100,6 +98,7 @@ function App() {
 							posterPK={pk}  
 							posterSK={sk}  
 							publishEvent={publishEvent}
+							getEvents={getEvents}
 						/>: relay && !sk ? 
 								<AuthCard 
 									setSk={setSk} 
@@ -111,13 +110,13 @@ function App() {
 					<div className="flex flex-col w-4/6 p-5">
 						{relay && events.length > 0 ? (
 							<div className="flex flex-col space-y-4">
-								{events.map((event) => {
-									return <DisplayEventCard event={event} />
+								{events.map((event, i) => {
+									return <DisplayEventCard event={event} getEvents={getEvents} key={i}/>
 								})}
 							</div>
 						): <button 
 								className="mb-2 bg-gray-200 dark:bg-[#1a1a1a] border border-dashed border-green-300" 
-								onClick={() => getEvents()}
+								onClick={() => getEvents([{kinds: [1]}])}
 							>
 								Load Feed!
 							</button>
