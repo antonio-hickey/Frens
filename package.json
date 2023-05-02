@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.14",
     "nostr-react": "^0.7.0",
     "nostr-tools": "^1.10.1",
     "notyf": "^3.10.0",

@@ -29,7 +29,7 @@ export default function CreatePostCard(props: CreatePostCardProps) {
 			>
 				<div className="flex flex-row justify-between">
 					<img className="inline-block h-8 w-8 rounded-full" src={userData?.picture} alt="" />
-					<span className="font-bold text-gray-200">
+					<span className="font-bold text-gray-800 dark:text-gray-200">
 						{userData?.name}
 					</span>
 					<span className="inline-flex items-center gap-x-1.5 rounded-md bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">

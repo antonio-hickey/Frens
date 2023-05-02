@@ -11,15 +11,8 @@ import DisplayEventCard from "./components/displayEventCard";
 import AuthCard from "./components/authCard";
 import CreatedAccModal from "./components/createdAccModal";
 import EventLoader from "./components/eventLoader";
-
-
-
-export const RELAYS = [
-  "wss://nostr-pub.wellorder.net",
-  "wss://nostr.drss.io",
-  "wss://nostr.swiss-enigma.ch",
-  "wss://relay.damus.io",
-];
+import RelayCtrlCard from "./components/relayCtrlCard";
+import { RELAYS } from "./utils/constants";
 
 
 function App() {
@@ -27,13 +20,15 @@ function App() {
 	const [showEventsLoader, setShowEventsLoader] = useState<boolean>(true);
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [events, setEvents] = useState<Event[]>([]);
+	const [curRelayName, setCurRelayName] = useState<string>("wss://relay.damus.io");
 	const [relay, setRelay] = useState<Relay | null>(null);
 	const [sk, setSk] = useState<string | null>(null);
 	const [pk, setPk] = useState<string | null>(sk ? getPublicKey(sk) : null);
 
 	useEffect(() => {
 		const connectRelay = async () => {
-			const relay = relayInit('wss://relay.damus.io');
+			setShowEventsLoader(true);
+			const relay = relayInit(curRelayName);
 			await relay.connect();
 
 			relay.on("connect", async () => {
@@ -49,13 +44,13 @@ function App() {
 				console.log('failed to connect to relay')
 			})
 		};
-		if (!relay) connectRelay();
+		connectRelay();
 
 		if (sk && !isLoggedIn) {
 			setPk(getPublicKey(sk))
 			setIsLoggedIn(true)
 		}
-	}, [sk, pk]);
+	}, [sk, pk, curRelayName]);
 
 	const createEvent = (unsignedEvent: UnsignedEvent, sk: string): Event => {
 		const eventHash = getEventHash(unsignedEvent);
@@ -100,7 +95,7 @@ function App() {
 				</div>
 				
 				<div className="flex flex-row h-screen">
-					<div className="flex flex-col w-2/6 h-screen p-5">
+					<div className="flex flex-col w-2/6 h-screen p-5 space-y-4">
 						{relay && sk && pk ? <CreatePostCard 
 							posterPK={pk}  
 							posterSK={sk}  
@@ -112,17 +107,21 @@ function App() {
 									publishEvent={publishEvent} 
 									setShowKeysModal={setShowKeysModal}
 								/>
-							: <p>uh oh</p>}
+							: <></>}
+
+						<RelayCtrlCard relays={RELAYS} curRelayName={curRelayName} setRelay={setCurRelayName}/>
 					</div>
 					<div 
-						className="flex flex-col w-4/6 p-5 max-h-full overflow-scroll"
+						className="flex flex-col w-4/6 p-5 max-h-full overflow-scroll space-y-4"
 						onScroll={() => {
-
+							// TODO: Implement fetching new/older events while scrolling ("infinite" content scroll)
 						}}
 					>
+
 						{showEventsLoader && (
 							<EventLoader />
 						)}
+
 						{events && (
 							<div className="flex flex-col space-y-4">
 								{events.map((event, i) => {

@@ -14,7 +14,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 	return (
 		<div className="divide-y divide-white overflow-hidden rounded-lg bg-gray-200 dark:bg-[#1a1a1a] shadow border border-dashed border-green-300" hidden={props.showEvent ? true : false}>
   		<div 
-				className="px-4 py-5 sm:px-6 hover:cursor-pointer text-lg hover:dark:bg-green-300/25 hover:!text-xl hover:cursor-pointer hover:underline hover:decoration-green-300"
+				className="px-4 py-5 sm:px-6 hover:cursor-pointer text-lg hover:bg-green-300/25 hover:!text-xl hover:cursor-pointer hover:underline hover:decoration-green-300"
 				onClick={() => {
 					const filter: Filter[] = [{
 						kinds: [1],
@@ -29,7 +29,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 						src={userData?.picture} 
 						alt=""
 					/>
-					<span className="font-bold text-gray-200">{userData?.name}</span>
+					<span className="font-bold text-gray-800 dark:text-gray-200">{userData?.name}</span>
 					<span className="inline-flex items-center gap-x-1.5 rounded-md bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
 					  <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
 					    <circle cx="3" cy="3" r="3" />
