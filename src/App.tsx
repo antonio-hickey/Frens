@@ -129,7 +129,14 @@ function App() {
 						{events && (
 							<div className="flex flex-col space-y-4">
 								{events.map((event, i) => {
-									return <DisplayEventCard event={event} getEvents={getEvents} key={i} showEvent={showEventsLoader}/>
+									return <DisplayEventCard 
+														pk={pk ? pk : null} 
+										        event={event} 
+										        getEvents={getEvents} 
+										        key={i} 
+										        showEvent={showEventsLoader}
+														publishEvent={publishEvent}		
+									/>
 								})}
 							</div>
 						)}
