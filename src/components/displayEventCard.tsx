@@ -1,15 +1,56 @@
-import { useProfile } from "nostr-react";
-import { Filter, type Event } from "nostr-tools";
+import { useProfile, useNostrEvents } from "nostr-react";
+import { Filter, type Event, UnsignedEvent } from "nostr-tools";
+import { FcLike, FcDislike } from "react-icons/fc"
 
 
 interface DisplayEventCardProps {
-	event: Event
+	pk: string | null,
+	event: Event,
 	showEvent: boolean,
 	getEvents: (filters: Filter[]) => void,
+	publishEvent: (event: UnsignedEvent, _sk?: string) => void,
+}
+
+interface ReactionStats {
+	nLikes: number,
+	nDislikes: number,
+	userLiked: boolean,
+	userDisliked: boolean,
 }
 
 export default function DisplayEventCard(props: DisplayEventCardProps) {
+	function getReactionStats(reactions: Event[]): ReactionStats {
+		let stats: ReactionStats = {nLikes: 0, nDislikes: 0, userLiked: false, userDisliked: false};
+		for (let i = 0; i < reactions.length; i++) {
+			const { content, pubkey } = reactions[i];
+			if (["+", "🤙", "👍"].includes(content)) {
+				stats.nLikes++;
+				if (pubkey === props.pk) stats.userLiked = true;
+			}
+
+			else if (["-", "👎"].includes(content)) {
+				stats.nDislikes++;
+				if (pubkey === props.pk) stats.userDisliked = true;
+			}
+		}	
+
+		return stats;
+	}
+
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
+	const reactionEvents = useNostrEvents({
+			filter: {
+				"#e": [props.event.id],
+				kinds: [7],
+			},
+	}).events;
+
+	let {
+		nLikes, nDislikes, 
+		userLiked, userDisliked
+	}: ReactionStats = getReactionStats(reactionEvents);
+
+
 
 	return (
 		<div className="divide-y divide-white overflow-hidden rounded-lg bg-gray-200 dark:bg-[#1a1a1a] shadow border border-dashed border-green-300" hidden={props.showEvent ? true : false}>
@@ -42,6 +83,62 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
   			<div className="mt-2">
 					<span className="text-lg dark:text-gray-200">{props.event.content}</span>					
   			</div>
+  		</div>
+  		<div 
+				className="px-4 py-5 sm:px-6 text-lg"
+			>
+				<div className="flex flex-row justify-start space-x-1">
+					<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
+						onClick={() => {
+							if (!props.pk) return;
+
+							if (userLiked) userLiked = false;
+							userDisliked = userDisliked ? false : true;
+
+							props.publishEvent({
+								kind: 7,
+								content: "-",
+							  created_at: Math.floor(Date.now() / 1000),
+								tags: [
+									["e", props.event.id],
+									["p", props.event.pubkey],
+								],
+								pubkey: props.pk, 
+							});
+						}}
+					>
+						<div className="flex flex-row items-center space-x-2">
+							<FcDislike className="h-5 w-5 hover:cursor-pointer"/>
+							<span className={userDisliked ? "text-green-700 dark:text-white" : "text-white"}>
+								{nDislikes}
+							</span>
+						</div>
+					</button>
+					<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
+						onClick={() => {
+							if (!props.pk) return;
+
+							if (userDisliked) userDisliked = false;
+							userLiked = userLiked ? false : true;
+
+							props.publishEvent({
+								kind: 7,
+								content: "+",
+							  created_at: Math.floor(Date.now() / 1000),
+								tags: [
+									["e", props.event.id],
+									["p", props.event.pubkey],
+								],
+								pubkey: props.pk, 
+							});
+						}}
+					>
+						<div className="flex flex-row items-center space-x-2">
+							<FcLike className="h-5 w-5 hover:cursor-pointer"/>
+							<span className={userLiked ? "text-green-700 dark:text-white" : "text-white"}>{nLikes}</span>
+						</div>
+					</button>
+				</div>
   		</div>
 		</div>
 	)

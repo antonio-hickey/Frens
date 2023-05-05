@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { 
 	getPublicKey, relayInit, Event, 
 	getEventHash, signEvent, Relay, 
 	UnsignedEvent, Filter,
 } from 'nostr-tools';
-import { BsMoonStarsFill } from "react-icons/bs";
-import { FaSun } from "react-icons/fa";
 
 
 import './App.css';
@@ -135,8 +133,15 @@ function App() {
 
 						{events && (
 							<div className="flex flex-col space-y-4">
-								{events.map((event, i) => {
-									return <DisplayEventCard event={event} getEvents={getEvents} key={i} showEvent={showEventsLoader}/>
+								{events.map((event) => {
+									return <DisplayEventCard 
+														pk={pk ? pk : null} 
+										        event={event} 
+										        getEvents={getEvents} 
+										        key={event.id} 
+										        showEvent={showEventsLoader}
+														publishEvent={publishEvent}		
+									/>
 								})}
 							</div>
 						)}
