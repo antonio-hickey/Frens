@@ -1,6 +1,5 @@
 import { useProfile, useNostrEvents } from "nostr-react";
 import { Filter, type Event, UnsignedEvent } from "nostr-tools";
-import { useEffect, useState } from "react";
 import { FcLike, FcDislike } from "react-icons/fc"
 
 
@@ -12,40 +11,45 @@ interface DisplayEventCardProps {
 	publishEvent: (event: UnsignedEvent, _sk?: string) => void,
 }
 
+interface ReactionStats {
+	nLikes: number,
+	nDislikes: number,
+	userLiked: boolean,
+	userDisliked: boolean,
+}
+
 export default function DisplayEventCard(props: DisplayEventCardProps) {
+	function getReactionStats(reactions: Event[]): ReactionStats {
+		let stats: ReactionStats = {nLikes: 0, nDislikes: 0, userLiked: false, userDisliked: false};
+		for (let i = 0; i < reactions.length; i++) {
+			const { content, pubkey } = reactions[i];
+			if (["+", "🤙", "👍"].includes(content)) {
+				stats.nLikes++;
+				if (pubkey === props.pk) stats.userLiked = true;
+			}
+
+			else if (["-", "👎"].includes(content)) {
+				stats.nDislikes++;
+				if (pubkey === props.pk) stats.userDisliked = true;
+			}
+		}	
+
+		return stats;
+	}
+
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
-	const [liked, setLiked] = useState<boolean>(false);
-	const [disliked, setDisliked] = useState<boolean>(false);
-	const reactions = useNostrEvents({
+	const reactionEvents = useNostrEvents({
 			filter: {
 				"#e": [props.event.id],
 				kinds: [7],
 			},
 	}).events;
 
-	const getReactionCount = (reactions: Event[], reactionType: string): number => {
-		let count: number = 0;
-		for (let reaction of reactions) {
-			if (reaction.content == reactionType) count++;
-		}
-		
-		return count;
-	}
+	let {
+		nLikes, nDislikes, 
+		userLiked, userDisliked
+	}: ReactionStats = getReactionStats(reactionEvents);
 
-	useEffect(() => {
-		if (reactions) {
-			for (let reaction of reactions) {
-				if (reaction.pubkey == props.pk && reaction.content == "+") {
-					setLiked(true);
-				} else if (reaction.pubkey == props.pk && reaction.content == "-") {
-					setDisliked(true);
-				} else {
-					setLiked(false);
-					setDisliked(false);
-				}
-			}
-		}
-	}, [reactions])
 
 
 	return (
@@ -84,12 +88,12 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 				className="px-4 py-5 sm:px-6 text-lg"
 			>
 				<div className="flex flex-row justify-start space-x-1">
-					<button className={disliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "border border-white hover:bg-green-300/25"}
+					<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "border border-white hover:bg-green-300/25"}
 						onClick={() => {
 							if (!props.pk) return;
 
-							if (liked) setLiked(false);
-							setDisliked(current => current ? false : true);
+							if (userLiked) userLiked = false;
+							userDisliked = userDisliked ? false : true;
 
 							props.publishEvent({
 								kind: 7,
@@ -106,16 +110,16 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 						<div className="flex flex-row items-center space-x-2">
 							<FcDislike className="h-5 w-5 hover:cursor-pointer"/>
 							<span>
-								{getReactionCount(reactions, "-")}
+								{nDislikes}
 							</span>
 						</div>
 					</button>
-					<button className={liked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "border border-white hover:bg-green-300/25"}
+					<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "border border-white hover:bg-green-300/25"}
 						onClick={() => {
 							if (!props.pk) return;
 
-							if (disliked) setDisliked(false);
-							setLiked(current => current ? false : true);
+							if (userDisliked) userDisliked = false;
+							userLiked = userLiked ? false : true;
 
 							props.publishEvent({
 								kind: 7,
@@ -131,7 +135,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 					>
 						<div className="flex flex-row items-center space-x-2">
 							<FcLike className="h-5 w-5 hover:cursor-pointer"/>
-							<span>{getReactionCount(reactions, "+")}</span>
+							<span>{nLikes}</span>
 						</div>
 					</button>
 				</div>
