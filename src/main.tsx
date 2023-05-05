@@ -11,7 +11,10 @@ export const RELAYS = [
   "wss://relay.damus.io",
 ];
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+
+let root = document.getElementById('root');
+root?.classList.add('dark:bg-[#242424]');
+ReactDOM.createRoot(root as HTMLElement).render(
   <React.StrictMode>
 		<NostrProvider relayUrls={RELAYS} debug={true}>
     	<App />
