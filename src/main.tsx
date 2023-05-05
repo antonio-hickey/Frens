@@ -13,6 +13,7 @@ export const RELAYS = [
 
 
 let root = document.getElementById('root');
+root?.classList.add('bg-white');
 root?.classList.add('dark:bg-[#242424]');
 ReactDOM.createRoot(root as HTMLElement).render(
   <React.StrictMode>
