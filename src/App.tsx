@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { 
 	getPublicKey, relayInit, Event, 
 	getEventHash, signEvent, Relay, 
 	UnsignedEvent, Filter,
 } from 'nostr-tools';
-import { BsMoonStarsFill } from "react-icons/bs";
-import { FaSun } from "react-icons/fa";
 
 
 import './App.css';
