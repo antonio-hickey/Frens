@@ -40,7 +40,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
   		</div>
   		<div className="px-4 py-5 sm:p-6">
   			<div className="mt-2">
-					<span className="text-lg">{props.event.content}</span>					
+					<span className="text-lg dark:text-gray-200">{props.event.content}</span>					
   			</div>
   		</div>
 		</div>

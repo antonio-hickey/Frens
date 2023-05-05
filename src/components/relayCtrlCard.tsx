@@ -25,7 +25,7 @@ export default function RelayCtrlCard(props: RelayCtrlCardProps) {
 				className="px-4 py-5 sm:px-6 text-lg hover:dark:bg-green-300/25 hover:!text-xl hover:underline hover:decoration-green-300"
 			>
 				<div className="flex flex-row justify-center">
-					<span className="text-lg font-semibold">Current <span className="text-green-500 dark:text-green-300">Relay</span>: </span>
+					<span className="text-lg font-semibold dark:text-gray-200">Current <span className="text-green-500 dark:text-green-300">Relay</span>: </span>
 					<span className="ml-5 inline-flex items-center gap-x-1.5 rounded-md bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
 					  <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
 					    <circle cx="3" cy="3" r="3" />
