@@ -128,12 +128,12 @@ function App() {
 
 						{events && (
 							<div className="flex flex-col space-y-4">
-								{events.map((event, i) => {
+								{events.map((event) => {
 									return <DisplayEventCard 
 														pk={pk ? pk : null} 
 										        event={event} 
 										        getEvents={getEvents} 
-										        key={i} 
+										        key={event.id} 
 										        showEvent={showEventsLoader}
 														publishEvent={publishEvent}		
 									/>
