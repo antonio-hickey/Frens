@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
 	getPublicKey, relayInit, Event, 
 	getEventHash, signEvent, Relay, 
 	UnsignedEvent, Filter,
 } from 'nostr-tools';
+import { BsMoonStarsFill } from "react-icons/bs";
+import { FaSun } from "react-icons/fa";
+
 
 import './App.css';
 import CreatePostCard from "./components/createPostCard";
@@ -12,6 +15,7 @@ import AuthCard from "./components/authCard";
 import CreatedAccModal from "./components/createdAccModal";
 import EventLoader from "./components/eventLoader";
 import RelayCtrlCard from "./components/relayCtrlCard";
+import ThemeSwitcher from "./components/themeSwitcher";
 import { RELAYS } from "./utils/constants";
 
 
@@ -81,7 +85,7 @@ function App() {
 
 
   return (
-		<div className="w-screen h-screen dark:bg-[#242424]">
+		<div className="w-screen h-screen bg-white dark:bg-[#242424]">
 			<div className="flex flex-col w-screen">
 				<div className="flex flex-row w-screen h-10">
       		<div className="flex w-full flex-col items-center justify-center">
@@ -95,6 +99,9 @@ function App() {
       		      :)
       		    </sup>
       		  </div>
+					</div>
+					<div className="flex w-1/6 flex-col items-end mr-10">
+						<ThemeSwitcher />
 					</div>
 				</div>
 				
