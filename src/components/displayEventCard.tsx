@@ -88,7 +88,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 				className="px-4 py-5 sm:px-6 text-lg"
 			>
 				<div className="flex flex-row justify-start space-x-1">
-					<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "border border-white hover:bg-green-300/25"}
+					<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
 						onClick={() => {
 							if (!props.pk) return;
 
@@ -109,12 +109,12 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 					>
 						<div className="flex flex-row items-center space-x-2">
 							<FcDislike className="h-5 w-5 hover:cursor-pointer"/>
-							<span>
+							<span className={userDisliked ? "text-green-700 dark:text-white" : "text-white"}>
 								{nDislikes}
 							</span>
 						</div>
 					</button>
-					<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "border border-white hover:bg-green-300/25"}
+					<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
 						onClick={() => {
 							if (!props.pk) return;
 
@@ -135,7 +135,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 					>
 						<div className="flex flex-row items-center space-x-2">
 							<FcLike className="h-5 w-5 hover:cursor-pointer"/>
-							<span>{nLikes}</span>
+							<span className={userLiked ? "text-green-700 dark:text-white" : "text-white"}>{nLikes}</span>
 						</div>
 					</button>
 				</div>
