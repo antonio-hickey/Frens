@@ -22,10 +22,10 @@ export default function AuthCard(props: AuthCardProps) {
 				<div>
   				<div className="mt-2 relative rounded-md shadow-sm">
   				  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-							<GiSkeletonKey className="text-green-700 h-6 w-6"/>
+							<GiSkeletonKey className="text-green-700 dark:text-green-300 h-6 w-6"/>
   				  </div>
   				  <input 
-							className="block w-full rounded-md border border-green-300 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
+							className="block w-full bg-black/25 dark:bg-white/25 rounded-md border border-green-300 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-green-900 placeholder:dark:text-green-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
 							placeholder="Your Private Key..." 
 							ref={skField}
 						/>
@@ -48,20 +48,20 @@ export default function AuthCard(props: AuthCardProps) {
 			<div className="rounded-lg bg-gray-200 shadow p-5 dark:bg-[#1a1a1a] border border-dashed border-green-300">
   			<div className="relative rounded-md shadow-sm">
   			  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-						<HiPencilSquare className="text-green-700 h-6 w-6"/>
+						<HiPencilSquare className="text-green-700 dark:text-green-300 h-6 w-6"/>
   			  </div>
   			  <input 
-						className="block w-full rounded-md border border-green-300 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
+						className="block w-full rounded-md bg-black/25 dark:bg-white/25 border border-green-300 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-green-900 placeholder:dark:text-green-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
 						placeholder="Your Display Name..." 
 						ref={displayNameField}
 					/>
   			</div>
 				<div className="mt-2 relative rounded-md shadow-sm">
   			  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-						<HiUserCircle className="text-green-700 h-6 w-6"/>
+						<HiUserCircle className="text-green-700 dark:text-green-300 h-6 w-6"/>
   			  </div>
   			  <input 
-						className="block w-full rounded-md border border-green-300 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
+						className="block w-full rounded-md bg-black/25 dark:bg-white/25 border border-green-300 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-green-900 placeholder:dark:text-green-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
 						placeholder="Profile Pic URL..." 
 						ref={profilePicField}
 					/>
