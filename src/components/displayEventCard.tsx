@@ -2,7 +2,7 @@ import { useProfile, useNostrEvents } from "nostr-react";
 import { Filter, type Event, UnsignedEvent } from "nostr-tools";
 import { FcLike, FcDislike } from "react-icons/fc";
 import { FaRetweet } from "react-icons/fa";
-import { BsChatRightQuoteFill, BsChatRightQuote } from "react-icons/bs";
+import { BsChatRightQuote } from "react-icons/bs";
 
 
 interface DisplayEventCardProps {
