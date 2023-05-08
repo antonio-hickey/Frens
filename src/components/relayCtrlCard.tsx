@@ -25,7 +25,7 @@ export default function RelayCtrlCard(props: RelayCtrlCardProps) {
 				className="px-4 py-5 sm:px-6 text-lg hover:dark:bg-green-300/25 hover:!text-xl hover:underline hover:decoration-green-300"
 			>
 				<div className="flex flex-row justify-center">
-					<span className="text-lg font-semibold dark:text-gray-200">Current <span className="text-green-500 dark:text-green-300">Relay</span>: </span>
+					<span className="text-lg font-semibold text-gray-800 dark:text-gray-200">Current <span className="text-green-500 dark:text-green-300">Relay</span>: </span>
 					<span className="ml-5 inline-flex items-center gap-x-1.5 rounded-md bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
 					  <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
 					    <circle cx="3" cy="3" r="3" />
@@ -84,7 +84,12 @@ export default function RelayCtrlCard(props: RelayCtrlCardProps) {
   						<label id="listbox-label" className="block text-lg font-semibold leading-6 text-gray-800 dark:text-gray-200">Custom <span className="text-green-500 dark:text-green-300">Relay</span>:</label>
 					  	<div className="mt-2 flex rounded-md shadow-sm">
 					  	  <span className="inline-flex items-center rounded-l-md bg-white/50 border border-r-0 border-gray-300 px-3 py-4 text-gray-800 dark:text-gray-200 sm:text-sm">wss://</span>
-					  	  <input ref={customRelayUrl} type="text" name="company-website" id="company-website" className="block pl-2 w-full min-w-0 flex-1 rounded-none rounded-r-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="www.example.com"/>
+					  	  <input 
+                  ref={customRelayUrl} 
+                  type="text" 
+                  className="bg-black/25 dark:bg-white/25 block pl-2 w-full min-w-0 flex-1 rounded-none rounded-r-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 placeholder:text-green-900 placeholder:dark:text-green-300" 
+                  placeholder="example.io"
+                />
 					  	</div>
 								<button 
 									className="mt-5 bg-green-100 text-green-700 w-1/2 mx-auto"
