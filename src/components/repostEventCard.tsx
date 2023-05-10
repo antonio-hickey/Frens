@@ -3,16 +3,18 @@ import { Filter, type Event, UnsignedEvent } from "nostr-tools";
 import { FcLike, FcDislike } from "react-icons/fc";
 import { FaRetweet } from "react-icons/fa";
 import { BsChatRightQuote } from "react-icons/bs";
-import RepostEventCard from "./repostEventCard";
+import RepostedEventCard from "./repostedEventCard"
+import { useEffect, useState } from "react";
 
 
-interface DisplayEventCardProps {
+interface RepostEventCardProps {
 	pk: string | null,
 	event: Event,
 	showEvent: boolean,
 	getEvents: (filters: Filter[]) => void,
 	getEvent: (filter: Filter) => Promise<Event | null | undefined>,
 	publishEvent: (event: UnsignedEvent, _sk?: string) => void,
+	isQuotedRepost: boolean,
 }
 
 interface ReactionStats {
@@ -23,7 +25,8 @@ interface ReactionStats {
 	userReposted: boolean,
 }
 
-export default function DisplayEventCard(props: DisplayEventCardProps) {
+
+export default function RepostEventCard(props: RepostEventCardProps) {
 	function getReactionStats(reactions: Event[]): ReactionStats {
 		let stats: ReactionStats = {nLikes: 0, nDislikes: 0, userLiked: false, userDisliked: false, userReposted: false};
 		for (let i = 0; i < reactions.length; i++) {
@@ -44,6 +47,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 		return stats;
 	}
 
+	const [relevantEvent, setRelevantEvent] = useState<Event | null>(null);
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
 	const reactionEvents = useNostrEvents({
 			filter: {
@@ -57,32 +61,17 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 		userLiked, userDisliked, userReposted
 	}: ReactionStats = getReactionStats(reactionEvents);
 
-
-	// If event is a simple repost
-	if (props.event.kind == 6) {
-		return <RepostEventCard 
-			event={props.event}
-			pk={props.pk}
-			publishEvent={props.publishEvent}
-			getEvents={props.getEvents}
-			getEvent={props.getEvent}
-			showEvent={props.showEvent}
-			isQuotedRepost={false}
-		/>
-	}
-
-	// If event is refrencing another event
-	if (props.event.tags[0] && props.event.tags[0][0] == "e") {
-			return <RepostEventCard 
-				event={props.event}
-				pk={props.pk}
-				publishEvent={props.publishEvent}
-				getEvents={props.getEvents}
-				getEvent={props.getEvent}
-				showEvent={props.showEvent}
-				isQuotedRepost={true}
-			/>
-	}
+	useEffect(() => {
+		if (props.isQuotedRepost) {
+			props.getEvent({
+				ids: [props.event.tags[0][1]],
+			}).then(event => {
+				if (event) setRelevantEvent(event);
+			});
+		} else {
+			setRelevantEvent(JSON.parse(props.event.content))
+		}
+	}, [props.isQuotedRepost])
 
 
 	return (
@@ -93,7 +82,6 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 					const filter: Filter[] = [{
 						kinds: [1],
 						authors: [props.event.pubkey],
-						limit: 3,
 					}];
 					props.getEvents(filter);
 				}}
@@ -113,9 +101,28 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 					</span>
 				</div>
   		</div>
-  		<div className="px-4 py-5 sm:p-6">
-  			<div className="mt-2">
-					<span className="text-lg text-gray-800 dark:text-gray-200">{props.event.content}</span>					
+  		<div className="px-4 py-5 sm:p-6 w-full">
+  			<div className="mt-2 w-full">
+					<span className="inline-block w-full text-lg text-gray-800 dark:text-gray-200 text-start pl-2 pb-2">
+						{props.event.kind == 6 ? (
+							<>
+								<FaRetweet className="inline-block h-5 w-5 text-green-700 dark:text-green-300 pb-1"/> <span className="underline decoration-green-700 dark:decoration-green-300">{userData?.name}</span> reposted:
+							</>		
+						) : <>{props.event.content}</>
+						}	
+					</span>			
+
+					{relevantEvent && 
+						<RepostedEventCard
+							pk={props.pk} 
+							event={relevantEvent} 
+							getEvents={props.getEvents}
+							getEvent={props.getEvent}
+							showEvent={props.showEvent}
+							publishEvent={props.publishEvent}
+							key={props.event.id}
+						/>
+					}
   			</div>
   		</div>
   		<div 
@@ -123,7 +130,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 			>
 				<div className="flex flex-row justify-between">
 					<div className="flex flex-row justify-start space-x-1">
-						<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25 hover:dark:bg-green-300/75"}
+						<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
 							onClick={() => {
 								if (!props.pk) return;
 
@@ -149,7 +156,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 								</span>
 							</div>
 						</button>
-						<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25 hover:dark:bg-green-300/75"}
+						<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
 							onClick={() => {
 								if (!props.pk) return;
 

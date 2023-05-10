@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { 
 	getPublicKey, relayInit, Event, 
 	getEventHash, signEvent, Relay, 
-	UnsignedEvent, Filter,
+	UnsignedEvent, Filter, QuotedEvent,
 } from 'nostr-tools';
 
 
@@ -21,7 +21,7 @@ function App() {
 	const [showKeysModal, setShowKeysModal] = useState<boolean>(false);
 	const [showEventsLoader, setShowEventsLoader] = useState<boolean>(true);
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-	const [events, setEvents] = useState<Event[]>([]);
+	const [events, setEvents] = useState<Event[] | QuotedEvent[]>([]);
 	const [curRelayName, setCurRelayName] = useState<string>("wss://relay.damus.io");
 	const [relay, setRelay] = useState<Relay | null>(null);
 	const [sk, setSk] = useState<string | null>(null);
@@ -35,7 +35,7 @@ function App() {
 
 			relay.on("connect", async () => {
 				setRelay(relay);
-				const events: Event[] = await relay.list([{kinds: [1], limit: 100}]);
+				const events: Event[] = await relay.list([{kinds: [1], limit: 3}]);
 				setEvents(events);
 
 				setTimeout(() => {
@@ -81,6 +81,13 @@ function App() {
 		if (events) setEvents(events);
 	}
 
+	const getQuotedEvent = async (filter: Filter): Promise<Event | null | undefined> => {
+		console.log(85, filter)
+		const e = await relay?.get(filter)
+		console.log(86, e)
+		return e;
+	}
+
 
   return (
 		<div className="w-screen h-screen bg-white dark:bg-[#242424]">
@@ -89,7 +96,7 @@ function App() {
       		<div className="flex w-full flex-col items-center justify-center">
       		  <div className="relative mb-8 text-4xl md:text-6xl font-bold text-green-200 dark:text-gray-200 hover:cursor-pointer hover:underline hover:decoration-green-300"
 							onClick={async () => {
-								if (relay) setEvents(await relay.list([{kinds: [1], limit: 100}]))
+								if (relay) setEvents(await relay.list([{kinds: [1], limit: 3}]))
 							}}
 						>
       		    Frens
@@ -138,6 +145,7 @@ function App() {
 														pk={pk ? pk : null} 
 										        event={event} 
 										        getEvents={getEvents} 
+														getEvent={getQuotedEvent}
 										        key={event.id} 
 										        showEvent={showEventsLoader}
 														publishEvent={publishEvent}		

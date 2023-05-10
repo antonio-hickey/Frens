@@ -37,6 +37,9 @@ declare module 'nostr-tools' {
 	    id: string;
 	    sig: string;
 	};
+	export type QuotedEvent = Event & {
+		quotedEvent: Event;
+	}
 	export declare function getBlankEvent(): EventTemplate;
 	export declare function finishEvent(t: EventTemplate, privateKey: string): Event;
 	export declare function serializeEvent(evt: UnsignedEvent): string;
