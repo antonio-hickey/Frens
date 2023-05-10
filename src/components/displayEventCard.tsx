@@ -86,7 +86,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
   		</div>
   		<div className="px-4 py-5 sm:p-6">
   			<div className="mt-2">
-					<span className="text-lg dark:text-gray-200">{props.event.content}</span>					
+					<span className="text-lg text-gray-800 dark:text-gray-200">{props.event.content}</span>					
   			</div>
   		</div>
   		<div 
@@ -94,7 +94,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 			>
 				<div className="flex flex-row justify-between">
 					<div className="flex flex-row justify-start space-x-1">
-						<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
+						<button className={userDisliked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25 hover:dark:bg-green-300/75"}
 							onClick={() => {
 								if (!props.pk) return;
 
@@ -120,7 +120,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 								</span>
 							</div>
 						</button>
-						<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25"}
+						<button className={userLiked ? "bg-green-300/25 border border-white hover:bg-green-300/25" : "bg-black/25 dark:bg-white/25 border border-white hover:bg-green-300/25 hover:dark:bg-green-300/75"}
 							onClick={() => {
 								if (!props.pk) return;
 
