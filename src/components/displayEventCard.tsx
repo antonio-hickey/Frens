@@ -93,7 +93,6 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 					const filter: Filter[] = [{
 						kinds: [1],
 						authors: [props.event.pubkey],
-						limit: 3,
 					}];
 					props.getEvents(filter);
 				}}

@@ -35,7 +35,7 @@ function App() {
 
 			relay.on("connect", async () => {
 				setRelay(relay);
-				const events: Event[] = await relay.list([{kinds: [1], limit: 3}]);
+				const events: Event[] = await relay.list([{kinds: [1], limit: 100}]);
 				setEvents(events);
 
 				setTimeout(() => {
@@ -82,9 +82,7 @@ function App() {
 	}
 
 	const getQuotedEvent = async (filter: Filter): Promise<Event | null | undefined> => {
-		console.log(85, filter)
 		const e = await relay?.get(filter)
-		console.log(86, e)
 		return e;
 	}
 
@@ -96,7 +94,7 @@ function App() {
       		<div className="flex w-full flex-col items-center justify-center">
       		  <div className="relative mb-8 text-4xl md:text-6xl font-bold text-green-200 dark:text-gray-200 hover:cursor-pointer hover:underline hover:decoration-green-300"
 							onClick={async () => {
-								if (relay) setEvents(await relay.list([{kinds: [1], limit: 3}]))
+								if (relay) setEvents(await relay.list([{kinds: [1], limit: 100}]))
 							}}
 						>
       		    Frens
