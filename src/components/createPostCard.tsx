@@ -21,7 +21,7 @@ export default function CreatePostCard(props: CreatePostCardProps) {
 				className="px-4 py-5 sm:px-6 hover:cursor-pointer text-lg hover:dark:bg-green-300/25 hover:!text-xl hover:cursor-pointer hover:underline hover:decoration-green-300"
 				onClick={() => {
 					const filter: Filter[] = [{
-						kinds: [1],
+						kinds: [1, 6],
 						authors: [props.posterPK],
 					}];
 					props.getEvents(filter);
