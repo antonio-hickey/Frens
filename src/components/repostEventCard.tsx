@@ -4,6 +4,7 @@ import { FcLike, FcDislike } from "react-icons/fc";
 import { FaRetweet } from "react-icons/fa";
 import { BsChatRightQuote } from "react-icons/bs";
 import RepostedEventCard from "./repostedEventCard"
+import { extractImageLinks } from "../utils/parsing";
 import { useEffect, useState } from "react";
 
 
@@ -48,6 +49,8 @@ export default function RepostEventCard(props: RepostEventCardProps) {
 	}
 
 	const [relevantEvent, setRelevantEvent] = useState<Event | null>(null);
+	const {txtContent, imgLinks} = extractImageLinks(props.event.content);
+
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
 	const reactionEvents = useNostrEvents({
 			filter: {
@@ -108,7 +111,14 @@ export default function RepostEventCard(props: RepostEventCardProps) {
 							<>
 								<FaRetweet className="inline-block h-5 w-5 text-green-700 dark:text-green-300 pb-1"/> <span className="underline decoration-green-700 dark:decoration-green-300">{userData?.name}</span> reposted:
 							</>		
-						) : <>{props.event.content}</>
+						) : <>
+								{txtContent}
+					  		{imgLinks ? (
+					  			imgLinks.map((imgLink, i) => {
+					  				return <img src={imgLink} key={i}></img>
+					  			})
+					  		): null}
+						</>
 						}	
 					</span>			
 
