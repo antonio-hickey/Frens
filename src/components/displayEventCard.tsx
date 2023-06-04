@@ -3,6 +3,7 @@ import { Filter, type Event, UnsignedEvent } from "nostr-tools";
 import { FcLike, FcDislike } from "react-icons/fc";
 import { FaRetweet } from "react-icons/fa";
 import { BsChatRightQuote } from "react-icons/bs";
+import { extractImageLinks } from "./../utils/parsing";
 import RepostEventCard from "./repostEventCard";
 
 
@@ -43,7 +44,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 
 		return stats;
 	}
-
+	
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
 	const reactionEvents = useNostrEvents({
 			filter: {
@@ -51,6 +52,7 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
 				kinds: [6, 7],
 			},
 	}).events;
+	const {txtContent, imgLinks} = extractImageLinks(props.event.content);
 
 	let {
 		nLikes, nDislikes, 
@@ -114,7 +116,16 @@ export default function DisplayEventCard(props: DisplayEventCardProps) {
   		</div>
   		<div className="px-4 py-5 sm:p-6">
   			<div className="mt-2">
-					<span className="text-lg text-gray-800 dark:text-gray-200">{props.event.content}</span>					
+					<span className="text-lg text-gray-800 dark:text-gray-200">{txtContent}</span>					
+					{imgLinks ? (
+						//image link found
+						imgLinks.map((imgLink, i) => {
+							return <img src={imgLink} key={i}></img>
+						})
+					):
+						// no img link found so just return nothing
+						null
+					}
   			</div>
   		</div>
   		<div 

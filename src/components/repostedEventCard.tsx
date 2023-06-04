@@ -1,6 +1,8 @@
 import { useProfile } from "nostr-react";
 import { Filter, type Event, UnsignedEvent } from "nostr-tools";
 
+import { extractImageLinks } from "../utils/parsing";
+
 
 interface RepostedEventCardProps {
 	pk: string | null,
@@ -13,6 +15,7 @@ interface RepostedEventCardProps {
 
 export default function RepostedEventCard(props: RepostedEventCardProps) {
 	const {data: userData} = useProfile({pubkey: props.event.pubkey});
+	const {txtContent, imgLinks} = extractImageLinks(props.event.content);
 
 
 	return (
@@ -45,7 +48,12 @@ export default function RepostedEventCard(props: RepostedEventCardProps) {
   		<div className="px-4 py-5 sm:p-6 w-full">
   			<div className="mt-2 w-full">
 					<span className="inline-block w-full text-lg text-gray-800 dark:text-gray-200 text-start pl-2 pb-1">
-						{props.event.content}	
+						{txtContent}	
+					  {imgLinks ? (
+					  	imgLinks.map((imgLink, i) => {
+					  		return <img src={imgLink} key={i}></img>
+					  	})
+					  ): null}
 					</span>					
   			</div>
   		</div>
